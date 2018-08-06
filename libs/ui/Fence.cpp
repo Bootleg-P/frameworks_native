@@ -47,18 +47,6 @@ Fence::Fence(base::unique_fd fenceFd) :
 }
 
 static status_t dump(const base::unique_fd &fd) {
-    CallStack stack("FENCE_DUMP");
-
-    struct sync_fence_info_data* finfo = sync_fence_info(fd);
-    struct sync_pt_info* pinfo = NULL;
-
-    ALOGE(" ----- Printing sync-points under fence fd:%d status:%d name:%s -----",
-            fd.get(), finfo->status, finfo->name);
-    while ((pinfo = sync_pt_info(finfo, pinfo)) != NULL) {
-        ALOGE("status:%d driver:%s obj:%s", pinfo->status,
-                pinfo->driver_name,  pinfo->obj_name);
-    }
-
     return NO_ERROR;
 }
 

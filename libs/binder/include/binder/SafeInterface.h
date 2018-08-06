@@ -22,9 +22,6 @@
 
 // Set to 1 to enable CallStacks when logging errors
 #define SI_DUMP_CALLSTACKS 0
-#if SI_DUMP_CALLSTACKS
-#include <utils/CallStack.h>
-#endif
 
 #include <utils/NativeHandle.h>
 

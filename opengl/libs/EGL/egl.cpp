@@ -63,9 +63,6 @@ static int gl_no_context() {
         }
         char value[PROPERTY_VALUE_MAX];
         property_get("debug.egl.callstack", value, "0");
-        if (atoi(value)) {
-            CallStack::log(LOG_TAG);
-        }
     }
     return 0;
 }
@@ -222,9 +219,6 @@ void gl_unimplemented() {
         ALOGE("called unimplemented OpenGL ES API");
         char value[PROPERTY_VALUE_MAX];
         property_get("debug.egl.callstack", value, "0");
-        if (atoi(value)) {
-            CallStack::log(LOG_TAG);
-        }
     }
 }
 
