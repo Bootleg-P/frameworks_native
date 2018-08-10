@@ -617,8 +617,6 @@ protected:
               : mFlinger(flinger), mLayer(layer) {}
     };
 
-    virtual void onFirstRef();
-
     friend class impl::SurfaceInterceptor;
 
     void commitTransaction(const State& stateToCommit);
