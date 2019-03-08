@@ -3,7 +3,7 @@ cc_library {
     name: "libETC1",
     srcs: ["ETC1/etc1.cpp"],
     host_supported: true,
-    cflags: ["-Wall", "-Werror"],
+    cflags: ["-Wall", "-Werror","-O3"],
 
     target: {
         android: {
@@ -60,6 +60,7 @@ cc_defaults {
         "-Wall",
         "-Werror",
         "-Wno-unused-variable",
+        "-O3",
     ],
     shared_libs: [
         // ***** DO NOT ADD NEW DEPENDENCIES HERE *****
@@ -105,6 +106,7 @@ cc_defaults {
         "-Wno-error=deprecated-register",
         "-Wno-error=unknown-attributes",
         "-Wno-unused-variable",
+        "-O3",
     ],
     shared_libs: [
         // ***** DO NOT ADD NEW DEPENDENCIES HERE *****
