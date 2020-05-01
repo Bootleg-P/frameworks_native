@@ -38,13 +38,10 @@
 #include <dlfcn.h>
 
 #include "DisplayUtils.h"
-
-#ifdef QCOM_UM_FAMILY
 #include <ExSurfaceFlinger/ExBufferLayer.h>
 #include <ExSurfaceFlinger/ExSurfaceFlinger.h>
 #include <ExSurfaceFlinger/ExVirtualDisplaySurface.h>
 #include <gralloc_priv.h>
-#endif
 
 namespace android {
 
@@ -53,12 +50,10 @@ bool DisplayUtils::sUseExtendedImpls = false;
 bool DisplayUtils::sDirectStreaming = false;
 
 DisplayUtils::DisplayUtils() {
-#ifdef QCOM_UM_FAMILY
     char value[PROPERTY_VALUE_MAX] = {};
     property_get("vendor.display.disable_qti_bsp", value, "0");
     int disable_qti_bsp = atoi(value);
     sUseExtendedImpls = !disable_qti_bsp;
-#endif
 }
 
 DisplayUtils* DisplayUtils::getInstance() {
@@ -69,23 +64,21 @@ DisplayUtils* DisplayUtils::getInstance() {
 }
 
 SurfaceFlinger* DisplayUtils::getSFInstance() {
-#ifdef QCOM_UM_FAMILY
     if (sUseExtendedImpls) {
         return new ExSurfaceFlinger();
+    } else {
+        return new SurfaceFlinger();
     }
-#endif
-    return new SurfaceFlinger();
 }
 
 BufferLayer* DisplayUtils::getBufferLayerInstance(SurfaceFlinger* flinger,
                             const sp<Client>& client, const String8& name,
                             uint32_t w, uint32_t h, uint32_t flags) {
-#ifdef QCOM_UM_FAMILY
     if (sUseExtendedImpls) {
         return new ExBufferLayer(flinger, client, name, w, h, flags);
+    } else {
+        return new BufferLayer(flinger, client, name, w, h, flags);
     }
-#endif
-    return new BufferLayer(flinger, client, name, w, h, flags);
 }
 
 void DisplayUtils::initVDSInstance(HWComposer & hwc, int32_t hwcDisplayId,
@@ -95,13 +88,11 @@ void DisplayUtils::initVDSInstance(HWComposer & hwc, int32_t hwcDisplayId,
         bool currentStateIsSecure)
 {
     if (sUseExtendedImpls) {
-#ifdef QCOM_UM_FAMILY
         VirtualDisplaySurface* vds = new ExVirtualDisplaySurface(hwc, hwcDisplayId,
                 currentStateSurface, bqProducer, bqConsumer, currentStateDisplayName,
                 currentStateIsSecure);
         dispSurface = vds;
         producer = vds;
-#endif
     } else {
         VirtualDisplaySurface* vds = new VirtualDisplaySurface(hwc, hwcDisplayId,
                 currentStateSurface, bqProducer, bqConsumer, currentStateDisplayName);
@@ -119,7 +110,6 @@ bool DisplayUtils::canAllocateHwcDisplayIdForVDS(int usage) {
     property_get("vendor.display.vds_allow_hwc", value, "0");
     int allowHwcForVDS = atoi(value);
 
-#ifdef QCOM_UM_FAMILY
     if (sUseExtendedImpls) {
         // Reserve hardware acceleration for WFD use-case
         // GRALLOC_USAGE_PRIVATE_WFD + GRALLOC_USAGE_HW_VIDEO_ENCODER = WFD using HW composer.
@@ -130,7 +120,6 @@ bool DisplayUtils::canAllocateHwcDisplayIdForVDS(int usage) {
         sDirectStreaming = ((usage & GRALLOC_USAGE_PRIVATE_WFD) &&
                             (usage & GRALLOC_USAGE_SW_READ_OFTEN));
     }
-#endif
 
     return (allowHwcForVDS || ((usage & flag_mask_pvt_wfd) &&
             (usage & flag_mask_hw_video)));
